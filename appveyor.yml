@@ -17,25 +17,25 @@ before_build:
   - choco install "msbuild-sonarqube-runner" -y
 
 build_script:
-  - SonarScanner.MSBuild.exe begin /k:"DeveLineStateSaver" /d:sonar.organization="devedse-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%sonarqubetoken% /d:sonar.cs.opencover.reportsPaths=".\DeveLineStateSaver.Coverage.xml" /d:sonar.coverage.exclusions="DeveLineStateSaver.ConsoleApp/**/*.cs,DeveLineStateSaver.Tests/**/*.cs"
+  - SonarScanner.MSBuild.exe begin /k:"SolToSharpLogic" /d:sonar.organization="devedse-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%sonarqubetoken% /d:sonar.cs.opencover.reportsPaths=".\SolToSharpLogic.Coverage.xml" /d:sonar.coverage.exclusions="SolToSharpLogic.ConsoleApp/**/*.cs,SolToSharpLogic.Tests/**/*.cs"
   - cmd: dotnet build -c Release
-  - OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test .\DeveLineStateSaver.Tests\DeveLineStateSaver.Tests.csproj -c Release" -oldstyle -returntargetcode -output:.\DeveLineStateSaver.Coverage.xml -filter:"+[DeveLineStateSaver*]*"
+  - OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test .\SolToSharpLogic.Tests\SolToSharpLogic.Tests.csproj -c Release" -oldstyle -returntargetcode -output:.\SolToSharpLogic.Coverage.xml -filter:"+[SolToSharpLogic*]*"
   - SonarScanner.MSBuild.exe end /d:sonar.login=%sonarqubetoken%
-  - codecov -f "DeveLineStateSaver.Coverage.xml"
+  - codecov -f "SolToSharpLogic.Coverage.xml"
 
 #test_script:
-#  - cmd: dotnet test -c release DeveLineStateSaver.Tests\DeveLineStateSaver.Tests.csproj
+#  - cmd: dotnet test -c release SolToSharpLogic.Tests\SolToSharpLogic.Tests.csproj
   
 after_test:
-  - cmd: dotnet pack -c Release DeveLineStateSaver\
+  - cmd: dotnet pack -c Release SolToSharpLogic\
   - cmd: Scripts\GoRepack.cmd
 
 artifacts:
-- path: Scripts\DeveLineStateSaver.7z
+- path: Scripts\SolToSharpLogic.7z
   name: droppackage7z
-- path: Scripts\DeveLineStateSaver.zip
+- path: Scripts\SolToSharpLogic.zip
   name: droppackagezip
-- path: 'DeveLineStateSaver\bin\Release\*.nupkg'
+- path: 'SolToSharpLogic\bin\Release\*.nupkg'
   name: nugetPackages
 
 deploy:
