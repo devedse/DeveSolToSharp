@@ -1,0 +1,50 @@
+version: 1.0.{build}
+os: Visual Studio 2017
+skip_tags: true
+configuration: Release
+
+environment:
+  sonarqubetoken:
+    secure: ppdeirHI9dsM7NpQgtwIRqXbiqhJZvIyHxOFhnME5HhRFS6IbYZqRppQi7fTqv37
+
+before_build:
+  - ps: .\scripts\set-version.ps1
+  - cmd: dotnet --info
+  - cmd: dotnet restore
+  - choco install opencover.portable
+  - choco install codecov
+  - choco install xunit
+  - choco install "msbuild-sonarqube-runner" -y
+
+build_script:
+  - SonarScanner.MSBuild.exe begin /k:"DeveLineStateSaver" /d:sonar.organization="devedse-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%sonarqubetoken% /d:sonar.cs.opencover.reportsPaths=".\DeveLineStateSaver.Coverage.xml" /d:sonar.coverage.exclusions="DeveLineStateSaver.ConsoleApp/**/*.cs,DeveLineStateSaver.Tests/**/*.cs"
+  - cmd: dotnet build -c Release
+  - OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test .\DeveLineStateSaver.Tests\DeveLineStateSaver.Tests.csproj -c Release" -oldstyle -returntargetcode -output:.\DeveLineStateSaver.Coverage.xml -filter:"+[DeveLineStateSaver*]*"
+  - SonarScanner.MSBuild.exe end /d:sonar.login=%sonarqubetoken%
+  - codecov -f "DeveLineStateSaver.Coverage.xml"
+
+#test_script:
+#  - cmd: dotnet test -c release DeveLineStateSaver.Tests\DeveLineStateSaver.Tests.csproj
+  
+after_test:
+  - cmd: dotnet pack -c Release DeveLineStateSaver\
+  - cmd: Scripts\GoRepack.cmd
+
+artifacts:
+- path: Scripts\DeveLineStateSaver.7z
+  name: droppackage7z
+- path: Scripts\DeveLineStateSaver.zip
+  name: droppackagezip
+- path: 'DeveLineStateSaver\bin\Release\*.nupkg'
+  name: nugetPackages
+
+deploy:
+- provider: GitHub
+  auth_token:
+    secure: do7S++r1rE5E3IZujCoMONsWYJNF7eoRoPyJbxSD851I850OlEq0gsHH/Tji7o00
+  artifact: droppackage7z,droppackagezip,nugetPackages
+- provider: NuGet
+  api_key:
+    secure: pVOzQthQbu7P9SUQwjG43ZEMcwAp7dVbe4BkDVEwJFu1gWK+L11L9mdfGLC5iO5Z
+  skip_symbols: true
+  artifact: /.*\.nupkg/
