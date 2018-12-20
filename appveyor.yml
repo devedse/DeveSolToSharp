@@ -17,25 +17,25 @@ before_build:
   - choco install "msbuild-sonarqube-runner" -y
 
 build_script:
-  - SonarScanner.MSBuild.exe begin /k:"SolToSharpLogic" /d:sonar.organization="devedse-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%sonarqubetoken% /d:sonar.cs.opencover.reportsPaths=".\SolToSharpLogic.Coverage.xml" /d:sonar.coverage.exclusions="SolToSharpLogic.ConsoleApp/**/*.cs,SolToSharpLogic.Tests/**/*.cs"
+  - SonarScanner.MSBuild.exe begin /k:"DeveSolToSharp" /d:sonar.organization="devedse-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%sonarqubetoken% /d:sonar.cs.opencover.reportsPaths=".\DeveSolToSharp.Coverage.xml" /d:sonar.coverage.exclusions="DeveSolToSharp.ConsoleApp/**/*.cs,DeveSolToSharp.Tests/**/*.cs"
   - cmd: dotnet build -c Release
-  - OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test .\SolToSharpLogic.Tests\SolToSharpLogic.Tests.csproj -c Release" -oldstyle -returntargetcode -output:.\SolToSharpLogic.Coverage.xml -filter:"+[SolToSharpLogic*]*"
+  - OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test .\DeveSolToSharp.Tests\DeveSolToSharp.Tests.csproj -c Release" -oldstyle -returntargetcode -output:.\DeveSolToSharp.Coverage.xml -filter:"+[DeveSolToSharp*]*"
   - SonarScanner.MSBuild.exe end /d:sonar.login=%sonarqubetoken%
-  - codecov -f "SolToSharpLogic.Coverage.xml"
+  - codecov -f "DeveSolToSharp.Coverage.xml"
 
-#test_script:
-#  - cmd: dotnet test -c release SolToSharpLogic.Tests\SolToSharpLogic.Tests.csproj
+test_script:
+ - cmd: dotnet test -c release DeveSolToSharp.Tests\DeveSolToSharp.Tests.csproj
   
 after_test:
-  - cmd: dotnet pack -c Release SolToSharpLogic\
+  - cmd: dotnet pack -c Release DeveSolToSharp\
   - cmd: Scripts\GoRepack.cmd
 
 artifacts:
-- path: Scripts\SolToSharpLogic.7z
+- path: Scripts\DeveSolToSharp.7z
   name: droppackage7z
-- path: Scripts\SolToSharpLogic.zip
+- path: Scripts\DeveSolToSharp.zip
   name: droppackagezip
-- path: 'SolToSharpLogic\bin\Release\*.nupkg'
+- path: 'DeveSolToSharp\bin\Release\*.nupkg'
   name: nugetPackages
 
 deploy:

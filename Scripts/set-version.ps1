@@ -13,7 +13,7 @@ $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
 $ScriptDir = Split-Path -Path $PSScriptFilePath -Parent
 $SolutionRoot = Split-Path -Path $ScriptDir -Parent
 
-$ProjectJsonPath = Join-Path -Path $SolutionRoot -ChildPath "SolToSharpLogic\SolToSharpLogic.csproj"
+$ProjectJsonPath = Join-Path -Path $SolutionRoot -ChildPath "DeveSolToSharp\DeveSolToSharp.csproj"
 #$re = [regex]"(?<=`"version`":\s`")[.\w-\*]*(?=`",)"
 #$re1 = [regex]"(?<=\[assembly: AssemblyVersion\(`")1.0.0.0(?=`")"
 #$re2 = [regex]"(?<=\[assembly: AssemblyFileVersion\(`")1.0.0.0(?=`")"

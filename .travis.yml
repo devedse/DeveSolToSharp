@@ -14,7 +14,7 @@ matrix:
       dist: trusty # Ubuntu 14.04
 
 script:
-  - docker build -t devedse/SolToSharpLogic .;
+  - docker build -t devedse/DeveSolToSharp .;
 
 notifications:
   email: false
