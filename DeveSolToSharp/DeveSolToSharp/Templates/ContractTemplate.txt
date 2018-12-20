@@ -1,0 +1,26 @@
+﻿using Nethereum.Hex.HexTypes;
+using System.Numerics;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Nethereum.Contracts;
+using Nethereum.RPC.Eth.DTOs;
+{UsingForPocos}
+{UsingForEventPocos}
+
+namespace {NameSpace}
+{
+    public class {ClassName} : AbstractContract
+    {
+        public {ClassName}(Account account, string url, string addressOfContract, BigInteger gasPrice)
+            : base(account, url, addressOfContract, gasPrice, "{ContractPath}")
+        {
+
+        }
+
+		//Events
+{Events}
+
+		//Functions
+{Methods}
+    }
+}

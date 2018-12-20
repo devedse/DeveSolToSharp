@@ -1,0 +1,43 @@
+﻿using Nethereum.Contracts;
+using Nethereum.Hex.HexTypes;
+using Nethereum.Util;
+using Nethereum.Web3;
+using System;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Text;
+
+namespace {NameSpace}
+{
+    public abstract class AbstractContract
+    {
+        protected UnitConversion _unitConversion = new UnitConversion();
+
+        public Account Account { get; }
+        public string Url { get; }
+        public Web3 Web3 { get; private set; }
+
+        public ContractOnDisk ContractOnDisk { get; }
+        public Contract Contract { get; }
+
+        public string ContractAddress { get; }
+
+        protected readonly HexBigInteger HbiNull = null;
+        protected readonly HexBigInteger GasLimitHbi = new HexBigInteger(new BigInteger(6000000));
+
+        public AbstractContract(Account account, string url, string addressOfContract, BigInteger gasPrice, string contractPath)
+        {
+            this.Account = account;
+            Url = url;
+
+            ContractOnDisk = new ContractOnDisk(contractPath);
+
+            Web3 = new Web3(account.Account, url);
+
+            Web3.TransactionManager.DefaultGasPrice = gasPrice;
+
+            ContractAddress = addressOfContract;
+            Contract = Web3.Eth.GetContract(ContractOnDisk.Abi, addressOfContract);
+        }
+    }
+}

@@ -1,0 +1,6 @@
+﻿		public Event {EventNameCapitalized}Event => Contract.GetEvent("{EventName}");
+
+        public List<EventLog<{ReturnType}>> {EventNameCapitalized}DecodeAllEventsForEvent(FilterLog[] filterLogs)
+        {
+            return {EventNameCapitalized}Event.DecodeAllEventsForEvent<{ReturnType}>(filterLogs);
+        }

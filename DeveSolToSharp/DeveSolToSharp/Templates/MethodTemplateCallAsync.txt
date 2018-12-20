@@ -1,0 +1,5 @@
+﻿        public Task<{ReturnType}> {MethodNameCapitalized}CallAsync({MethodParameters})
+        {
+            var function = Contract.GetFunction("{MethodName}");
+            return function.CallAsync<{ReturnType}>({ParametersForNethereum});
+        }
