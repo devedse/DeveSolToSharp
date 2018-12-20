@@ -1,11 +1,9 @@
-﻿using Nethereum.Contracts;
+﻿using System.Numerics;
+using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Util;
 using Nethereum.Web3;
-using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
+using Nethereum.Web3.Accounts;
 
 namespace {NameSpace}
 {
@@ -27,12 +25,12 @@ namespace {NameSpace}
 
         public AbstractContract(Account account, string url, string addressOfContract, BigInteger gasPrice, string contractPath)
         {
-            this.Account = account;
+            Account = account;
             Url = url;
 
             ContractOnDisk = new ContractOnDisk(contractPath);
 
-            Web3 = new Web3(account.Account, url);
+            Web3 = new Web3(Account, url);
 
             Web3.TransactionManager.DefaultGasPrice = gasPrice;
 

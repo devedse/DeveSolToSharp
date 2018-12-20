@@ -91,19 +91,12 @@ namespace DeveSolToSharp.SolToSharpLogic
             }
 
             var abstractContractFileName = Path.Combine(cla.OutputDirectory, "AbstractContract.cs");
-            if (!File.Exists(abstractContractFileName))
-            {
-                var abstractContractClass = TemplateProvider.GetAbstractContractTemplate(cla.DesiredNameSpace);
-                File.WriteAllText(abstractContractFileName, StringHelper.NormalizeLineEndings(abstractContractClass), Encoding.UTF8);
-            }
+            var abstractContractClass = TemplateProvider.GetAbstractContractTemplate(cla.DesiredNameSpace);
+            File.WriteAllText(abstractContractFileName, StringHelper.NormalizeLineEndings(abstractContractClass), Encoding.UTF8);
 
             var contractOnDiskFileName = Path.Combine(cla.OutputDirectory, "ContractOnDisk.cs");
-
-            if (!File.Exists(contractOnDiskFileName))
-            {
-                var contractOnDiskClass = TemplateProvider.GetAbstractContractTemplate(cla.DesiredNameSpace);
-                File.WriteAllText(contractOnDiskFileName, StringHelper.NormalizeLineEndings(contractOnDiskClass), Encoding.UTF8);
-            }
+            var contractOnDiskClass = TemplateProvider.GetContractOnDiskTemplate(cla.DesiredNameSpace);
+            File.WriteAllText(contractOnDiskFileName, StringHelper.NormalizeLineEndings(contractOnDiskClass), Encoding.UTF8);
 
             var abiJson = JsonConvert.DeserializeObject<List<AbiJson>>(contractOnDisk.Abi);
 
