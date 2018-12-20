@@ -1,4 +1,5 @@
 ﻿using DeveSolToSharp.Helpers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -26,9 +27,16 @@ namespace DeveSolToSharp.SolToSharpLogic
             return readTxt;
         }
 
+        public static string GetGeneratedWithTxt()
+        {
+            var txt = GetTemplate("GeneratedWithTxt");
+            return txt;
+        }
+
         public static string GetAbstractContractTemplate(string desiredNameSpace)
         {
             var template = GetTemplate("AbstractContractTemplate");
+            template = GetGeneratedWithTxt() + Environment.NewLine + template;
             template = template.Replace("{NameSpace}", desiredNameSpace);
             return template;
         }
@@ -36,6 +44,7 @@ namespace DeveSolToSharp.SolToSharpLogic
         public static string GetContractOnDiskTemplate(string desiredNameSpace, string contractsDirectory)
         {
             var template = GetTemplate("ContractOnDiskTemplate");
+            template = GetGeneratedWithTxt() + Environment.NewLine + template;
             template = template.Replace("{NameSpace}", desiredNameSpace);
             template = template.Replace("{ContractsDirectory}", contractsDirectory);
             return template;
@@ -44,6 +53,7 @@ namespace DeveSolToSharp.SolToSharpLogic
         public static string GetContractTemplate(string desiredNameSpace, string className, string contractSubDir, string contractFileName, string methods, string events, string usingForPocos, string usingForEventPocos)
         {
             var template = GetTemplate("ContractTemplate");
+            template = GetGeneratedWithTxt() + Environment.NewLine + template;
             template = template.Replace("{NameSpace}", desiredNameSpace);
             template = template.Replace("{ClassName}", className);
             template = template.Replace("{ContractSubDir}", contractSubDir);
@@ -96,6 +106,7 @@ namespace DeveSolToSharp.SolToSharpLogic
         public static string GetPocoTemplate(string desiredNameSpace, string lastNamespacePart, string className, string properties)
         {
             var template = GetTemplate("PocoTemplate");
+            template = GetGeneratedWithTxt() + Environment.NewLine + template;
             template = template.Replace("{NameSpace}", desiredNameSpace);
             template = template.Replace("{LastNamespacePart}", lastNamespacePart);
             template = template.Replace("{ClassName}", className);
@@ -106,6 +117,7 @@ namespace DeveSolToSharp.SolToSharpLogic
         public static string GetPocoEventTemplate(string desiredNameSpace, string lastNamespacePart, string className, string properties)
         {
             var template = GetTemplate("PocoEventTemplate");
+            template = GetGeneratedWithTxt() + Environment.NewLine + template;
             template = template.Replace("{NameSpace}", desiredNameSpace);
             template = template.Replace("{LastNamespacePart}", lastNamespacePart);
             template = template.Replace("{ClassName}", className);
