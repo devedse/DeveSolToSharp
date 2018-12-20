@@ -1,5 +1,18 @@
 # DeveSolToSharp
-The goal of this project is to be able to save the state of a code line and skip it if it already knows the result.
+With this tool you can create C# files based on the .ABI of solidity files.
+
+Install the tool by running:
+`dotnet tool install -g DeveSolToSharp`
+
+Then run the tool from the directory the .ABI files are in.
+
+## Parameters
+
+| Param (Short) | Param (Full) | Description | Default Value | Required |
+| -- | == | -- | -- |
+| -i | --inputdir | The directory containing the .abi files | Current directory | False |
+| -o | --outputdir | The directory the C# files should be generated in | inputdirectory\DeveSolToSharp | False |
+| -n | --namespace | The desired C# namespace, e.g. MySolution.Contracts | Tried to determine this automatically | False |
 
 ## Build status
 
