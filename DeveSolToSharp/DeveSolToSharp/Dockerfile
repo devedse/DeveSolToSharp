@@ -16,7 +16,7 @@ RUN dotnet test --configuration Release ./SolToSharpLogic.Tests/SolToSharpLogic.
 RUN dotnet publish ./SolToSharpLogic/SolToSharpLogic.csproj --output /app/ --configuration Release
 
 # Stage 2
-FROM microsoft/aspnetcore:2.0.5-stretch
+FROM microsoft/aspnetcore:2.0.9-stretch
 WORKDIR /app
 COPY --from=builder /app .
 ENTRYPOINT ["dotnet", "SolToSharpLogic.dll"]
