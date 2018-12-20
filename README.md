@@ -1,5 +1,5 @@
 # DeveSolToSharp
-With this tool you can create C# files based on the .ABI of solidity files.
+With this tool you can create C# files (for Nethereum) based on the .ABI of solidity files. These files can then be used to easily interact with Smart Contracts deployed to the Blockchain.
 
 Install the tool by running:
 `dotnet tool install -g DeveSolToSharp`

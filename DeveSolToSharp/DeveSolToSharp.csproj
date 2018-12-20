@@ -13,7 +13,7 @@
     <Authors>Devedse</Authors>
     <Description>This tool can be installed and used to generate C# files to interact with Solidity contracts on the blockchain</Description>
     <PackageProjectUrl>https://github.com/devedse/DeveSolToSharp</PackageProjectUrl>
-    <PackageTags>csharp;save;code;state</PackageTags>
+    <PackageTags>solidity;nethereum;generator</PackageTags>
     <DebugType>full</DebugType>
     <PackAsTool>true</PackAsTool>
   </PropertyGroup>
