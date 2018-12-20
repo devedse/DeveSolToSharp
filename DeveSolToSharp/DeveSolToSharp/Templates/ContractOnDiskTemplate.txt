@@ -10,13 +10,17 @@ namespace {NameSpace}
         public string Bin { get; private set; }
         public string Json { get; private set; }
 
-        public ContractOnDisk(string inputDirectory, string contractName)
+		public const string ContractsDirectory = @"{ContractsDirectory}";
+
+        public ContractOnDisk(string contractSubDirectory, string contractName)
         {
             Name = contractName;
 
-            Abi = File.ReadAllText(Path.Combine(inputDirectory, $"{contractName}.abi"));
-            Bin = File.ReadAllText(Path.Combine(inputDirectory, $"{contractName}.bin"));
-            Json = File.ReadAllText(Path.Combine(inputDirectory, $"{contractName}.json"));
+			var ctrDir = Path.Combine(ContractsDirectory, contractSubDirectory);
+
+            Abi = File.ReadAllText(Path.Combine(ctrDir, $"{contractName}.abi"));
+            Bin = File.ReadAllText(Path.Combine(ctrDir, $"{contractName}.bin"));
+            Json = File.ReadAllText(Path.Combine(ctrDir, $"{contractName}.json"));
         }
     }
 }

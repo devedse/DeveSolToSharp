@@ -16,6 +16,7 @@ namespace DeveSolToSharp
 
         public static void Start(CommandLineArguments commandLineArguments)
         {
+            commandLineArguments.InputDirectory = @"C:\XPreenr\Preenr\Preenr.Platform\BlockchainRedesign\SmartContracts\bin";
             var completedSuccessfully = CsharpGen.Go(commandLineArguments);
             if (!completedSuccessfully)
             {

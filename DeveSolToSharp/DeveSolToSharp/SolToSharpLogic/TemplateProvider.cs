@@ -33,19 +33,21 @@ namespace DeveSolToSharp.SolToSharpLogic
             return template;
         }
 
-        public static string GetContractOnDiskTemplate(string desiredNameSpace)
+        public static string GetContractOnDiskTemplate(string desiredNameSpace, string contractsDirectory)
         {
             var template = GetTemplate("ContractOnDiskTemplate");
             template = template.Replace("{NameSpace}", desiredNameSpace);
+            template = template.Replace("{ContractsDirectory}", contractsDirectory);
             return template;
         }
 
-        public static string GetContractTemplate(string desiredNameSpace, string className, string contractPath, string methods, string events, string usingForPocos, string usingForEventPocos)
+        public static string GetContractTemplate(string desiredNameSpace, string className, string contractSubDir, string contractFileName, string methods, string events, string usingForPocos, string usingForEventPocos)
         {
             var template = GetTemplate("ContractTemplate");
             template = template.Replace("{NameSpace}", desiredNameSpace);
             template = template.Replace("{ClassName}", className);
-            template = template.Replace("{ContractPath}", contractPath);
+            template = template.Replace("{ContractSubDir}", contractSubDir);
+            template = template.Replace("{ContractFileName}", contractFileName);
             template = template.Replace("{Methods}", methods);
             template = template.Replace("{Events}", events);
             template = template.Replace("{UsingForPocos}", usingForPocos);

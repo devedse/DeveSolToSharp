@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -23,6 +24,25 @@ namespace DeveSolToSharp.Helpers
                     return null;
                 }
                 return FoundCsprojFile(parentDir);
+            }
+        }
+
+        public static IEnumerable<string> EnumerateAllFilesInDirectory(string dir)
+        {
+            var files = Directory.GetFiles(dir);
+            foreach(var file in files)
+            {
+                yield return file;
+            }
+
+            var dirs = Directory.GetDirectories(dir);
+            foreach(var subdir in dirs)
+            {
+                var allSubFiles = EnumerateAllFilesInDirectory(subdir);
+                foreach(var subFile in allSubFiles)
+                {
+                    yield return subFile;
+                }
             }
         }
     }

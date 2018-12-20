@@ -31,5 +31,24 @@ namespace DeveSolToSharp.Helpers
 
             return namespaceDetermined;
         }
+
+        public static string DetermineWhereSmartContractsDirIsRelativeToCsproj(string csproj, string actualCtrFolder)
+        {
+            var dirHere = Path.GetDirectoryName(csproj);
+            var differenceInDir = actualCtrFolder.Substring(dirHere.Length);
+
+            var trimmed = differenceInDir.Trim('/').Trim('\\');
+
+            return trimmed;
+        }
+
+        public static string DetermineSubContractDir(string inputDir, string actualCtrFolder)
+        {
+            var differenceInDir = actualCtrFolder.Substring(inputDir.Length);
+
+            var trimmed = differenceInDir.Trim('/').Trim('\\');
+
+            return trimmed;
+        }
     }
 }

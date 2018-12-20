@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Nethereum.Contracts;
 using Nethereum.RPC.Eth.DTOs;
+using Nethereum.Web3.Accounts;
 {UsingForPocos}
 {UsingForEventPocos}
 
@@ -12,7 +13,7 @@ namespace {NameSpace}
     public class {ClassName} : AbstractContract
     {
         public {ClassName}(Account account, string url, string addressOfContract, BigInteger gasPrice)
-            : base(account, url, addressOfContract, gasPrice, "{ContractPath}")
+            : base(account, url, addressOfContract, gasPrice, "{ContractSubDir}", "{ContractFileName}")
         {
 
         }

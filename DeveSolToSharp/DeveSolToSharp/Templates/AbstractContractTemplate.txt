@@ -23,12 +23,12 @@ namespace {NameSpace}
         protected readonly HexBigInteger HbiNull = null;
         protected readonly HexBigInteger GasLimitHbi = new HexBigInteger(new BigInteger(6000000));
 
-        public AbstractContract(Account account, string url, string addressOfContract, BigInteger gasPrice, string contractPath)
+        public AbstractContract(Account account, string url, string addressOfContract, BigInteger gasPrice, string contractSubDir, string contractFileName)
         {
             Account = account;
             Url = url;
 
-            ContractOnDisk = new ContractOnDisk(contractPath);
+            ContractOnDisk = new ContractOnDisk(contractSubDir, contractFileName);
 
             Web3 = new Web3(Account, url);
 

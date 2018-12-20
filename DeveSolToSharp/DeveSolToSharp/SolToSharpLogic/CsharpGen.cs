@@ -55,25 +55,20 @@ namespace DeveSolToSharp.SolToSharpLogic
 
         private static bool GenerateCodeFiles(CommandLineArguments cla)
         {
-            var allFiles = Directory.GetFiles(cla.InputDirectory);
+            var allFiles = FileFinder.EnumerateAllFilesInDirectory(cla.InputDirectory);
+            var allAbiFiles = allFiles.Where(t => Path.GetExtension(t).Equals(".abi", StringComparison.OrdinalIgnoreCase)).ToList();
 
-            var groups = allFiles.GroupBy(t => Path.GetFileNameWithoutExtension(t))
-                .Where(t => t.Count(z => Path.GetExtension(z).Equals(".bin", StringComparison.OrdinalIgnoreCase)) == 1 &&
-                            t.Count(z => Path.GetExtension(z).Equals(".abi", StringComparison.OrdinalIgnoreCase)) == 1 &&
-                            t.Count(z => Path.GetExtension(z).Equals(".json", StringComparison.OrdinalIgnoreCase)) == 1);
-
-            if (!groups.Any())
+            if (!allAbiFiles.Any())
             {
                 Console.WriteLine($"No contracts found in input dir {cla.InputDirectory}. Make sure that for every contract 3 files exist: ctrname.abi, ctrname.bin and ctrname.json");
                 return false;
             }
 
             bool allWorked = true;
-            foreach (var group in groups)
+            foreach (var abiFile in allAbiFiles)
             {
-                Console.WriteLine($"Found contract with name {group.Key}");
-                var contractOnDisk = new ContractOnDisk(cla.InputDirectory, group.Key);
-                var thisWorked = GenerateCodeFilesForContract(cla, contractOnDisk);
+                Console.WriteLine($"Found ABI with name {abiFile}");
+                var thisWorked = GenerateCodeFilesForContract(cla, abiFile);
                 if (thisWorked == false)
                 {
                     allWorked = false;
@@ -83,37 +78,56 @@ namespace DeveSolToSharp.SolToSharpLogic
         }
 
 
-        private static bool GenerateCodeFilesForContract(CommandLineArguments cla, ContractOnDisk contractOnDisk)
+        private static bool GenerateCodeFilesForContract(CommandLineArguments cla, string abiFile)
         {
             if (!Directory.Exists(cla.OutputDirectory))
             {
                 Directory.CreateDirectory(cla.OutputDirectory);
             }
 
+            var parentDir = Path.GetDirectoryName(cla.OutputDirectory);
+            var csproj = FileFinder.FoundCsprojFile(parentDir);
+            var relativeInputDirectory = NamespaceFinder.DetermineWhereSmartContractsDirIsRelativeToCsproj(csproj, cla.InputDirectory);
+            var relativeCtrDirectoryComparedToInputDirectory = NamespaceFinder.DetermineSubContractDir(cla.InputDirectory, Path.GetDirectoryName(abiFile));
+            var relativeCtrDirectoryComparedToCsproj = Path.Combine(relativeInputDirectory, relativeCtrDirectoryComparedToInputDirectory);
+
+
+
             var abstractContractFileName = Path.Combine(cla.OutputDirectory, "AbstractContract.cs");
             var abstractContractClass = TemplateProvider.GetAbstractContractTemplate(cla.DesiredNameSpace);
             File.WriteAllText(abstractContractFileName, StringHelper.NormalizeLineEndings(abstractContractClass), Encoding.UTF8);
 
             var contractOnDiskFileName = Path.Combine(cla.OutputDirectory, "ContractOnDisk.cs");
-            var contractOnDiskClass = TemplateProvider.GetContractOnDiskTemplate(cla.DesiredNameSpace);
+            var contractOnDiskClass = TemplateProvider.GetContractOnDiskTemplate(cla.DesiredNameSpace, cla.InputDirectory);
             File.WriteAllText(contractOnDiskFileName, StringHelper.NormalizeLineEndings(contractOnDiskClass), Encoding.UTF8);
 
-            var abiJson = JsonConvert.DeserializeObject<List<AbiJson>>(contractOnDisk.Abi);
+            var abi = File.ReadAllText(abiFile);
+            var abiJson = JsonConvert.DeserializeObject<List<AbiJson>>(abi);
 
-            var ctrNamePart = contractOnDisk.Name;
+            var ctrNamePart = Path.GetFileNameWithoutExtension(abiFile);
             var ctrClassName = $"{ctrNamePart}Contract";
+
+            var namespaceHere = cla.DesiredNameSpace;
+
+            if (!string.IsNullOrWhiteSpace(relativeCtrDirectoryComparedToInputDirectory))
+            {
+                namespaceHere += $".{relativeCtrDirectoryComparedToInputDirectory}";
+            }
             var pocoContractNamespace = $"{ctrClassName}Pocos";
             var eventContractNamespace = $"{ctrClassName}Pocos.Events";
             var contractCsFileName = $"{ctrClassName}.cs";
-            var fullCcontractcsFileName = Path.Combine(cla.OutputDirectory, contractCsFileName);
 
-            var dirPocos = Path.Combine(cla.OutputDirectory, pocoContractNamespace);
+            var outputDirForThisContract = Path.Combine(cla.OutputDirectory, relativeCtrDirectoryComparedToInputDirectory);
+
+            var fullCcontractcsFileName = Path.Combine(outputDirForThisContract, contractCsFileName);
+
+            var dirPocos = Path.Combine(outputDirForThisContract, pocoContractNamespace);
             if (!Directory.Exists(dirPocos))
             {
                 Directory.CreateDirectory(dirPocos);
             }
 
-            var dirEvents = Path.Combine(cla.OutputDirectory, pocoContractNamespace, "Events");
+            var dirEvents = Path.Combine(outputDirForThisContract, pocoContractNamespace, "Events");
             if (!Directory.Exists(dirEvents))
             {
                 Directory.CreateDirectory(dirEvents);
@@ -129,7 +143,7 @@ namespace DeveSolToSharp.SolToSharpLogic
             {
                 if (method.Type == "function")
                 {
-                    var createdPoco = CreateFunction(cla, pocoContractNamespace, dirPocos, sbMethods, method);
+                    var createdPoco = CreateFunction(namespaceHere, pocoContractNamespace, dirPocos, sbMethods, method);
                     if (createdPoco)
                     {
                         createdPocos = true;
@@ -137,7 +151,7 @@ namespace DeveSolToSharp.SolToSharpLogic
                 }
                 else if (method.Type == "event")
                 {
-                    var createdEventPoco = CreateEvent(cla, eventContractNamespace, dirEvents, sbEvents, method);
+                    var createdEventPoco = CreateEvent(namespaceHere, eventContractNamespace, dirEvents, sbEvents, method);
                     if (createdEventPoco)
                     {
                         createdEventPocos = true;
@@ -152,15 +166,16 @@ namespace DeveSolToSharp.SolToSharpLogic
             string nameSpaceForPocos = "";
             if (createdPocos)
             {
-                nameSpaceForPocos = $"using {cla.DesiredNameSpace}.{pocoContractNamespace};";
+                nameSpaceForPocos = $"using {namespaceHere}.{pocoContractNamespace};";
             }
             string nameSpaceForEvents = "";
             if (createdEventPocos)
             {
-                nameSpaceForEvents = $"using {cla.DesiredNameSpace}.{eventContractNamespace};";
+                nameSpaceForEvents = $"using {namespaceHere}.{eventContractNamespace};";
             }
 
-            var templateContract = TemplateProvider.GetContractTemplate(cla.DesiredNameSpace, ctrClassName, contractOnDisk.Name, sbMethods.ToString(), sbEvents.ToString(), nameSpaceForPocos, nameSpaceForEvents);
+
+            var templateContract = TemplateProvider.GetContractTemplate(namespaceHere, ctrClassName, relativeCtrDirectoryComparedToCsproj, ctrNamePart, sbMethods.ToString(), sbEvents.ToString(), nameSpaceForPocos, nameSpaceForEvents);
             File.WriteAllText(fullCcontractcsFileName, StringHelper.NormalizeLineEndings(templateContract), Encoding.UTF8);
 
 
@@ -170,7 +185,7 @@ namespace DeveSolToSharp.SolToSharpLogic
             return true;
         }
 
-        private static bool CreateEvent(CommandLineArguments cla, string eventContractNamespace, string dirEvents, StringBuilder sbEvents, AbiJson method)
+        private static bool CreateEvent(string namespaceHere, string eventContractNamespace, string dirEvents, StringBuilder sbEvents, AbiJson method)
         {
             var propertiesSb = new StringBuilder();
 
@@ -195,7 +210,7 @@ namespace DeveSolToSharp.SolToSharpLogic
 
             var classNamePoco = StringHelper.FirstCharToUpper(method.Name);
             var outputFileName = $"{Path.Combine(dirEvents, classNamePoco)}.cs";
-            var templatePocoEvent = TemplateProvider.GetPocoEventTemplate(cla.DesiredNameSpace, eventContractNamespace, classNamePoco, propertiesSb.ToString());
+            var templatePocoEvent = TemplateProvider.GetPocoEventTemplate(namespaceHere, eventContractNamespace, classNamePoco, propertiesSb.ToString());
             File.WriteAllText(outputFileName, StringHelper.NormalizeLineEndings(templatePocoEvent), Encoding.UTF8);
 
 
@@ -206,7 +221,7 @@ namespace DeveSolToSharp.SolToSharpLogic
             return true;
         }
 
-        private static bool CreateFunction(CommandLineArguments cla, string pocoContractNamespace, string dirPocos, StringBuilder sbMethods, AbiJson method)
+        private static bool CreateFunction(string namespaceHere, string pocoContractNamespace, string dirPocos, StringBuilder sbMethods, AbiJson method)
         {
             bool createdPoco = false;
 
@@ -268,7 +283,7 @@ namespace DeveSolToSharp.SolToSharpLogic
                 }
 
                 var outputFileName = $"{Path.Combine(dirPocos, classNamePoco)}.cs";
-                var templatePoco = TemplateProvider.GetPocoTemplate(cla.DesiredNameSpace, pocoContractNamespace, classNamePoco, propertiesSb.ToString());
+                var templatePoco = TemplateProvider.GetPocoTemplate(namespaceHere, pocoContractNamespace, classNamePoco, propertiesSb.ToString());
                 createdPoco = true;
                 File.WriteAllText(outputFileName, StringHelper.NormalizeLineEndings(templatePoco), Encoding.UTF8);
 
