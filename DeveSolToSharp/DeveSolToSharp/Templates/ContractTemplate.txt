@@ -13,7 +13,7 @@ namespace {NameSpace}
     public class {ClassName} : AbstractContract
     {
         public {ClassName}(Account account, string url, string addressOfContract, BigInteger gasPrice)
-            : base(account, url, addressOfContract, gasPrice, "{ContractSubDir}", "{ContractFileName}")
+            : base(account, url, addressOfContract, gasPrice, @"{ContractSubDir}", "{ContractFileName}")
         {
 
         }

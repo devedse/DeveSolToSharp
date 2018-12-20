@@ -1,7 +1,7 @@
 ﻿        public async Task<string> {MethodNameCapitalized}SendTransaction({MethodParameters})
         {
             var function = Contract.GetFunction("{MethodName}");
-			var estimateGas = await function.EstimateGasAsync(Account.PublicAddress, GasLimitHbi, null{ParametersForNethereum});
+			var estimateGas = await function.EstimateGasAsync(Account.Address, GasLimitHbi, null{ParametersForNethereum});
             estimateGas = new HexBigInteger(50000 + estimateGas.Value);
-            return await function.SendTransactionAsync(Account.PublicAddress, estimateGas, null{ParametersForNethereum});
+            return await function.SendTransactionAsync(Account.Address, estimateGas, null{ParametersForNethereum});
         }

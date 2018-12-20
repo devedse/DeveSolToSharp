@@ -1,5 +1,5 @@
 ﻿        public Task<{ReturnType}> {MethodNameCapitalized}CallAsync({MethodParameters})
         {
             var function = Contract.GetFunction("{MethodName}");
-            return function.CallDeserializingToObjectAsync<{ReturnType}>(Account.PublicAddress, HbiNull, HbiNull{ParametersForNethereum});
+            return function.CallDeserializingToObjectAsync<{ReturnType}>(Account.Address, HbiNull, HbiNull{ParametersForNethereum});
         }
