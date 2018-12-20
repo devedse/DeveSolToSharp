@@ -11,7 +11,6 @@ namespace DeveSolToSharp
             Parser.Default.ParseArguments<CommandLineArguments>(args)
               .WithParsed(opts => Start(opts));
             //.WithNotParsed<CommandLineArguments>((errs) => HandleParseError(errs));
-
         }
 
         public static void Start(CommandLineArguments commandLineArguments)
