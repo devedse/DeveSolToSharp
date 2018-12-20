@@ -22,9 +22,6 @@ build_script:
   - OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test .\DeveSolToSharp.Tests\DeveSolToSharp.Tests.csproj -c Release" -oldstyle -returntargetcode -output:.\DeveSolToSharp.Coverage.xml -filter:"+[DeveSolToSharp*]*"
   - SonarScanner.MSBuild.exe end /d:sonar.login=%sonarqubetoken%
   - codecov -f "DeveSolToSharp.Coverage.xml"
-
-test_script:
- - cmd: dotnet test -c release DeveSolToSharp.Tests\DeveSolToSharp.Tests.csproj
   
 after_test:
   - cmd: dotnet pack -c Release DeveSolToSharp\
