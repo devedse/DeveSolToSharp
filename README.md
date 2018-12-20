@@ -9,7 +9,7 @@ Then run the tool from the directory the .ABI files are in.
 ## Parameters
 
 | Param (Short) | Param (Full) | Description | Default Value | Required |
-| -- | == | -- | -- |
+| -- | -- | -- | -- | -- |
 | -i | --inputdir | The directory containing the .abi files | Current directory | False |
 | -o | --outputdir | The directory the C# files should be generated in | inputdirectory\DeveSolToSharp | False |
 | -n | --namespace | The desired C# namespace, e.g. MySolution.Contracts | Tried to determine this automatically | False |
