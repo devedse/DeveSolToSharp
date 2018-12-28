@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Threading.Tasks;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Util;
@@ -23,7 +24,7 @@ namespace {NameSpace}
         protected readonly HexBigInteger HbiNull = null;
         protected readonly HexBigInteger GasLimitHbi = new HexBigInteger(new BigInteger(6000000));
 
-        public AbstractContract(Account account, string url, string addressOfContract, BigInteger gasPrice, string contractSubDir, string contractFileName)
+        public AbstractContract(Account account, string url, BigInteger gasPrice, string contractSubDir, string contractFileName, string addressOfContract = null)
         {
             Account = account;
             Url = url;
@@ -36,6 +37,20 @@ namespace {NameSpace}
 
             ContractAddress = addressOfContract;
             Contract = Web3.Eth.GetContract(ContractOnDisk.Abi, addressOfContract);
+        }
+
+		public async Task<bool> Exists()
+        {
+            if (ContractAddress == null)
+            {
+                return false;
+            }
+            var code = await Web3.Eth.GetCode.SendRequestAsync(ContractAddress);
+            if (code == "0x")
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

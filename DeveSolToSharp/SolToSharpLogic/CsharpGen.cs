@@ -136,6 +136,7 @@ namespace DeveSolToSharp.SolToSharpLogic
 
             var sbMethods = new StringBuilder();
             var sbEvents = new StringBuilder();
+            var sbConstructor = new StringBuilder();
             bool createdPocos = false;
             bool createdEventPocos = false;
 
@@ -157,6 +158,10 @@ namespace DeveSolToSharp.SolToSharpLogic
                         createdEventPocos = true;
                     }
                 }
+                else if (method.Type == "constructor")
+                {
+                    CreateConstructor(namespaceHere, pocoContractNamespace, dirPocos, sbConstructor, method);
+                }
                 else
                 {
                     Console.WriteLine($"Unknown method type found: {method.Type}");
@@ -175,7 +180,7 @@ namespace DeveSolToSharp.SolToSharpLogic
             }
 
 
-            var templateContract = TemplateProvider.GetContractTemplate(namespaceHere, ctrClassName, relativeCtrDirectoryComparedToCsproj, ctrNamePart, sbMethods.ToString(), sbEvents.ToString(), nameSpaceForPocos, nameSpaceForEvents);
+            var templateContract = TemplateProvider.GetContractTemplate(namespaceHere, ctrClassName, relativeCtrDirectoryComparedToCsproj, ctrNamePart, sbConstructor.ToString(), sbMethods.ToString(), sbEvents.ToString(), nameSpaceForPocos, nameSpaceForEvents);
             File.WriteAllText(fullCcontractcsFileName, StringHelper.NormalizeLineEndings(templateContract), Encoding.UTF8);
 
 
@@ -183,6 +188,30 @@ namespace DeveSolToSharp.SolToSharpLogic
 
             Console.WriteLine(templateContract);
             return true;
+        }
+
+        private static void CreateConstructor(string namespaceHere, string pocoContractNamespace, string dirPocos, StringBuilder sbMethods, AbiJson method)
+        {
+            for (int i = 0; i < method.Inputs.Length; i++)
+            {
+                var inputHere = method.Inputs[i];
+                if (string.IsNullOrWhiteSpace(inputHere.Name))
+                {
+                    inputHere.Name = $"value{i}";
+                }
+            }
+
+            var methodParameters = string.Join(", ", method.Inputs.Select(t => $"{SolidityTypeToCsharpType.ConvertToCsharpType(t.Type)} {t.Name}"));
+            var parametersForNethereum = string.Join(", ", method.Inputs.Select(t => t.Name));
+            var parametersForNethereumStartingWithCommaIfTheyExist = parametersForNethereum;
+            if (!string.IsNullOrWhiteSpace(parametersForNethereumStartingWithCommaIfTheyExist))
+            {
+                parametersForNethereumStartingWithCommaIfTheyExist = $", {parametersForNethereumStartingWithCommaIfTheyExist}";
+            }
+
+            var templateMethod = TemplateProvider.GetMethodTemplateSendTransactionNoOutput(methodParameters, parametersForNethereumStartingWithCommaIfTheyExist);
+            sbMethods.AppendLine();
+            sbMethods.AppendLine(templateMethod);
         }
 
         private static bool CreateEvent(string namespaceHere, string eventContractNamespace, string dirEvents, StringBuilder sbEvents, AbiJson method)

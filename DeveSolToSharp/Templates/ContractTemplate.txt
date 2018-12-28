@@ -12,11 +12,14 @@ namespace {NameSpace}
 {
     public class {ClassName} : AbstractContract
     {
-        public {ClassName}(Account account, string url, string addressOfContract, BigInteger gasPrice)
-            : base(account, url, addressOfContract, gasPrice, @"{ContractSubDir}", "{ContractFileName}")
+        public {ClassName}(Account account, string url, BigInteger gasPrice, string addressOfContract = null)
+            : base(account, url, gasPrice, @"{ContractSubDir}", "{ContractFileName}", addressOfContract)
         {
 
         }
+
+		//Constructor
+{Constructor}
 
 		//Events
 {Events}

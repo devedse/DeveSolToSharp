@@ -50,7 +50,7 @@ namespace DeveSolToSharp.SolToSharpLogic
             return template;
         }
 
-        public static string GetContractTemplate(string desiredNameSpace, string className, string contractSubDir, string contractFileName, string methods, string events, string usingForPocos, string usingForEventPocos)
+        public static string GetContractTemplate(string desiredNameSpace, string className, string contractSubDir, string contractFileName, string constructor, string methods, string events, string usingForPocos, string usingForEventPocos)
         {
             var template = GetTemplate("ContractTemplate");
             template = GetGeneratedWithTxt() + Environment.NewLine + template;
@@ -58,10 +58,19 @@ namespace DeveSolToSharp.SolToSharpLogic
             template = template.Replace("{ClassName}", className);
             template = template.Replace("{ContractSubDir}", contractSubDir);
             template = template.Replace("{ContractFileName}", contractFileName);
+            template = template.Replace("{Constructor}", constructor);
             template = template.Replace("{Methods}", methods);
             template = template.Replace("{Events}", events);
             template = template.Replace("{UsingForPocos}", usingForPocos);
             template = template.Replace("{UsingForEventPocos}", usingForEventPocos);
+            return template;
+        }
+
+        public static string GetMethodTemplateSendTransactionNoOutput(string methodParameters, string parametersForNethereum)
+        {
+            var template = GetTemplate("ContractDeployMethodTemplate");
+            template = template.Replace("{MethodParameters}", methodParameters);
+            template = template.Replace("{ParametersForNethereum}", parametersForNethereum);
             return template;
         }
 
