@@ -2,5 +2,6 @@
         {
             var gas = new HexBigInteger(20000000);
             var receipt = await Web3.Eth.DeployContract.SendRequestAndWaitForReceiptAsync(ContractOnDisk.Abi, ContractOnDisk.Bin, Account.Address, gas, null{ParametersForNethereum});
-            return receipt.ContractAddress;
+            ContractAddress = receipt.ContractAddress;
+			return receipt.ContractAddress;
         }

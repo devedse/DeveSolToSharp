@@ -19,7 +19,7 @@ namespace {NameSpace}
         public ContractOnDisk ContractOnDisk { get; }
         public Contract Contract { get; }
 
-        public string ContractAddress { get; }
+        public string ContractAddress { get; protected set; }
 
         protected readonly HexBigInteger HbiNull = null;
         protected readonly HexBigInteger GasLimitHbi = new HexBigInteger(new BigInteger(6000000));
