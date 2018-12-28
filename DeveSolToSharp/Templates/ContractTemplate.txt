@@ -1,4 +1,5 @@
 ﻿using Nethereum.Hex.HexTypes;
+using System.Net.Http.Headers;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -12,8 +13,8 @@ namespace {NameSpace}
 {
     public class {ClassName} : AbstractContract
     {
-        public {ClassName}(Account account, string url, BigInteger gasPrice, string addressOfContract = null)
-            : base(account, url, gasPrice, @"{ContractSubDir}", "{ContractFileName}", addressOfContract)
+        public {ClassName}(Account account, string url, BigInteger gasPrice, string addressOfContract = null, AuthenticationHeaderValue authHeader = null)
+            : base(account, url, gasPrice, @"{ContractSubDir}", "{ContractFileName}", addressOfContract, authHeader)
         {
 
         }
